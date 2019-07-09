@@ -3,33 +3,53 @@
     // echo 'end of php';
 
     include('config/db_connect.php');
-    $errors = array('name' => '', 'age' => '' );
+    $errors = array('lname' => '', 'age' => '', 'sql' => '' );
 
     // check get request. The GET will be an array storing data to be transfered to server as GET. 
     // _ is global var. GET belows will take the value when the submit button pressed
     if(isset($_POST['submit'])){
-        // echo htmlspecialchars($_POST['name']);      // Prevent XSS
+        // echo htmlspecialchars($_POST['lname']);      // Prevent XSS
         // echo htmlspecialchars($_POST['age']);
         errCheck();
         if(array_filter($errors)) {
             phpAlert($errors);      // array in the form
         } else{
-
-                $name = mysqli_real_escape_string($qCon, $_POST['name']);
+                // security sql query
+                $lname = mysqli_real_escape_string($qCon, $_POST['lname']);
                 $age = mysqli_real_escape_string($qCon, $_POST['age']);
                 header('Location: index.php');
+
+                // create sql query
+                $sql = "INSERT INTO person(lname, age) VALUES ('$lname', '$age')";
+
+                // save db and check 
+                if(mysqli_query($qCon, $sql)) {
+                    // success
+                    header('Location: 25.php');
+                } else {
+                    $errors['sql'] = 'Query error: '. mysqli_error($qCon);
+                    phpAlert($errors);
+                }
             }
     }
 
     function errCheck(){
         global $errors; // things outside of function is inaccessible, better use this or create new array then export it out
-        if(empty($_POST['name'])) {$errors['name'] = 'Name can\'t be emty';}
-        elseif(!preg_match('/^[a-zA-Z\s]+$/', $_POST['name'])){ $errors['name'] = 'Only letters available for name.';};
+        if(empty($_POST['lname'])) {$errors['lname'] = 'Name field can\'t be emty';}
+        elseif(!preg_match('/^[a-zA-Z\s]+$/', $_POST['lname'])){ $errors['lname'] = 'Only letters available for Name field.';};
         if(empty($_POST['age'])) {$errors['age'] = 'Age can\'t be empty';} 
     }
 
-    function phpAlert($msg){
-        echo '<script type="text/javascript">alert("' . $msg['name'] . '. ' . $msg['age'] . '")</script>';
+    function phpAlert($msg){                                                                                                // 
+        // echo '<script type="text/javascript">alert("' . $msg['lname'] . '. ' . $msg['age'] . '")</script>';
+        $message = '';
+        foreach ($msg as $errors) {
+            $message = $message.$errors;
+            if ($errors != null) {
+                $message = $message.'. ';
+            }
+        }
+        echo '<script type="text/javascript">alert("' .$message. '")</script>';
     };
 
 ?>
@@ -44,7 +64,7 @@
         <h4 class="center">Add a Person</h4>
         <form class="white" action="15.php" method="POST">           <!-- GET request form -->
             <label>Name: </label>
-            <input type="text" name="name">                            <!-- name is the key for http request -->
+            <input type="text" name="lname">                            <!-- name is the key for http request -->
             <label>Age: </label>
             <input type="number" name="age">
             <div class="center">
