@@ -18,7 +18,9 @@
 <html>
     <div class="row">
         <?php foreach($people as $person) {
-            ?><h4><?php echo 'lname: ' . $person['lname'] . '. Age: ' . $person['age']; 
+            ?><h4><?php echo 'Name: ' . $person['lname'] . '. Age: ' . $person['age']; 
+            ?><div> <h3><a href="25ex.php?id=<?php echo $person['id']?>">more info</a> </div>                        <!-- A link create by using php echo to add variables -->
+            <?php
         }?>
     </div>
 </html>
