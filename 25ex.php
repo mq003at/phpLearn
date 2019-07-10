@@ -2,7 +2,18 @@
     // check GET request id param
    include('config/db_connect.php') ;
 
-   // get request
+   // delete request
+   if(isset($_POST['delete_btn'])):
+        $delete_id = mysqli_real_escape_string($qCon, $_POST['delete_id']);
+        $sql = "DELETE FROM person WHERE id = $delete_id";                  // no * since we delete the whole document
+        if(mysqli_query($qCon, $sql)):
+        //success
+        header('Location: 25.php');
+        else: echo 'Query error: ' . mysqli_error($qCon);
+        endif;
+    endif;
+
+   // get request from param id
    if(isset($_GET['id'])):
        // security sql retrieve
        $id = mysqli_real_escape_string($qCon, $_GET['id']);
@@ -22,18 +33,6 @@
        mysqli_close($qCon);
     endif;
 
-   // delete request
-   if(isset($_POST['delete'])):
-        $delete_id = mysqli_real_escape_string($qCon, $_POST['delete_id']);
-        $sql = "DELETE FROM person WHERE id = $delete_id";                  // no * since we delete the whole document
-        if(mysqli_query($qCon, $sql)):
-        //success
-        header('Location: 25.php');
-        else: echo 'Query error: ' . mysqli_error_list($qCon);
-        endif;
-    endif;
-
-
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +46,7 @@
 
         <!-- DELETE FORM -->
         <form action="25ex.php" method="POST">
-            <input type="hidden" name="delete_id" value="<?php echo $person['id'] ?>">
+            <input type="hidden" name="delete_id" value="<?php echo htmlspecialchars($person['ID']) ?>">
             <input type="submit" name="delete_btn" value="DELETE">
         </form>
         <?php else: ?>
