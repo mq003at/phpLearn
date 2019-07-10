@@ -24,7 +24,7 @@
     <body>
         <!-- <p><?php echo $score > 40 ? 'High score' : 'Low score'; ?></p> -->
 
-        <form action="34.php" method="POST">
+        <form action="index.php" method="POST">
             <label>What should we call you? </label>
             <input type="text" name="alias">
             <input type="submit" name="submit_btn" value="Submit">
